@@ -109,27 +109,6 @@
   }
   .brand .place { color: var(--ink-soft); font-size: 1rem; }
 
-  /* Theme control */
-  fieldset.theme {
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 0.5rem 0.75rem 0.7rem;
-    margin: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 0.75rem;
-    align-items: center;
-  }
-  fieldset.theme legend { font-size: 0.85rem; font-weight: 700; color: var(--ink-soft); padding-inline: 0.25rem; }
-  fieldset.theme label {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    min-height: 32px;
-    padding: 0.15rem 0.35rem;
-    cursor: pointer;
-  }
-  fieldset.theme input { width: 1.2rem; height: 1.2rem; margin: 0; accent-color: var(--accent); }
 
   nav.site ul {
     list-style: none;
@@ -175,13 +154,6 @@
   }
   .button:hover { text-decoration: underline; }
 
-  .note {
-    border-left: 4px solid var(--accent);
-    padding: 0.75rem 1rem;
-    background: var(--bg-raised);
-    border-radius: 0 6px 6px 0;
-  }
-  .note p:last-child { margin-bottom: 0; }
 
   footer.site {
     margin-top: 3rem;
@@ -211,15 +183,6 @@
         <p class="place">Sacramento and the surrounding region</p>
       </div>
     </div>
-
-    <form id="theme-form">
-      <fieldset class="theme">
-        <legend>Appearance</legend>
-        <label><input type="radio" name="theme" id="theme-system" value="system" checked> Match device</label>
-        <label><input type="radio" name="theme" id="theme-light" value="light"> Light</label>
-        <label><input type="radio" name="theme" id="theme-dark" value="dark"> Dark</label>
-      </fieldset>
-    </form>
   </header>
 
   <nav class="site" aria-label="Page sections">
@@ -236,7 +199,6 @@
       <h2 id="welcome">Welcome</h2>
       <p class="lead">We are blind and low-vision Sacramentans, family members and friends who meet every month to support one another, share what works, and speak up for blind Californians in the state capital.</p>
       <p>Whether you have been blind all your life, are losing vision now, or want to support someone who is, you are welcome at our next meeting. There is no cost to attend.</p>
-      <p><a class="button" href="#meetings">Find our next meeting</a></p>
     </section>
 
     <section id="meetings" aria-labelledby="meetings-h">
@@ -278,9 +240,6 @@
       <h2 id="about-h">About the Federation</h2>
       <p>The National Federation of the Blind is the largest organization of blind people in the United States, led by blind people. Its members believe that blindness is not the characteristic that defines you or your future, and that with the right training and opportunity, blind people can live the lives they want.</p>
       <p>The River City Chapter is one of the local chapters of the <a href="https://www.nfbcal.org/">National Federation of the Blind of California</a>, the state affiliate. The affiliate runs the annual state convention, the BELL Academy braille program for children, state scholarships and NFB-NEWSLINE, a free service that reads newspapers and magazines aloud by phone and app.</p>
-      <div class="note">
-        <p><strong>Draft note.</strong> The meeting time and contact details on this page come from the affiliate's Chapters and Divisions listing; the email list is the chapter's Groups.io group. The welcome text and membership details are placeholder copy for the chapter to confirm or replace.</p>
-      </div>
     </section>
   </main>
 
@@ -290,41 +249,4 @@
   </footer>
 </div>
 
-<script>
-(function () {
-  var root = document.documentElement;
-  var form = document.getElementById('theme-form');
-  var KEY = 'rivercity-theme';
-
-  function apply(value) {
-    if (value === 'light' || value === 'dark') {
-      root.setAttribute('data-theme', value);
-    } else {
-      root.removeAttribute('data-theme');
-      value = 'system';
-    }
-    var input = form.querySelector('input[value="' + value + '"]');
-    if (input) input.checked = true;
-  }
-
-  var saved = null;
-  try { saved = localStorage.getItem(KEY); } catch (e) {}
-  if (saved) {
-    apply(saved);
-  } else {
-    // Honor a theme the host stamped, otherwise follow the device.
-    var stamped = root.getAttribute('data-theme');
-    apply(stamped === 'light' || stamped === 'dark' ? stamped : 'system');
-  }
-
-  form.addEventListener('change', function (e) {
-    if (e.target.name !== 'theme') return;
-    apply(e.target.value);
-    try {
-      if (e.target.value === 'system') localStorage.removeItem(KEY);
-      else localStorage.setItem(KEY, e.target.value);
-    } catch (err) {}
-  });
-})();
-</script>
 </body></html>
