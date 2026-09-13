@@ -209,7 +209,7 @@
         <dt>Where</dt>
         <dd>Online, by Zoom</dd>
         <dt>Next meeting</dt>
-        <dd>Saturday, October 10, 2026</dd>
+        <dd><time id="next-meeting" datetime="2026-10-10">Saturday, October 10, 2026</time></dd>
         <dt>How to get the link</dt>
         <dd>Email or call Tiffany Manosh and she will send you the Zoom details. See <a href="#contact">Contact</a>.</dd>
       </dl>
@@ -249,4 +249,50 @@
   </footer>
 </div>
 
+<script>
+(function () {
+  // Meetings: second Saturday, 10:30 AM to 12:30 PM Pacific.
+  // The date rolls to next month's meeting 30 minutes after a meeting ends (1:00 PM Pacific).
+  var ZONE = 'America/Los_Angeles';
+  var ROLLOVER_HOUR = 13;
+  var el = document.getElementById('next-meeting');
+  if (!el) return;
+
+  function localParts(date) {
+    var parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: ZONE, hourCycle: 'h23',
+      year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric'
+    }).formatToParts(date);
+    var o = {};
+    parts.forEach(function (p) { if (p.type !== 'literal') o[p.type] = parseInt(p.value, 10); });
+    return o;
+  }
+  function secondSaturday(year, month) { // month is 0-based
+    var firstWeekday = new Date(Date.UTC(year, month, 1)).getUTCDay();
+    return 1 + ((6 - firstWeekday + 7) % 7) + 7;
+  }
+  function nextMeeting(now) {
+    var t = localParts(now);
+    var year = t.year, month = t.month - 1;
+    var sat = secondSaturday(year, month);
+    var passed = t.day > sat || (t.day === sat && (t.hour > ROLLOVER_HOUR || (t.hour === ROLLOVER_HOUR && t.minute >= 0)));
+    if (passed) {
+      month += 1;
+      if (month > 11) { month = 0; year += 1; }
+      sat = secondSaturday(year, month);
+    }
+    return new Date(Date.UTC(year, month, sat));
+  }
+  function render() {
+    var d = nextMeeting(new Date());
+    el.dateTime = d.toISOString().slice(0, 10);
+    el.textContent = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'UTC', weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+    }).format(d);
+  }
+  render();
+  // Keep a page that stays open across the rollover moment current too.
+  setInterval(render, 60 * 1000);
+})();
+</script>
 </body></html>
